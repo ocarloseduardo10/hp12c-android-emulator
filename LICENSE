@@ -1,7 +1,8 @@
 MIT License
 
-Copyright (c) 2007-2020 Fabio Lima (Finanx 12c engine)
-Copyright (c) 2026 Carlos Santos (@ocarloseduardo10) — Android port and UI
+Copyright (c) 2007-2020 Fabio Lima (Finanx 12c engine — net.sf.finanx.fx12c)
+Copyright (c) 2026 Raul Kiaer (hp12c-emulator-rust — 7-segment display, skin.json, test vectors, manual)
+Copyright (c) 2026 Carlos Santos (@ocarloseduardo10) — Android port, Kotlin UI, and all mobile adaptations
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

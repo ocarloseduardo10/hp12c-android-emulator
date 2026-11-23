@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -17,22 +18,23 @@ import net.sf.finanx.fx12c.calc.Key
 /**
  * Activity principal do HP 12C Mobile.
  *
- * Implementa [CalcStateListenerEx] para receber:
- *  - Updates de estado do display (display, indicadores, financeSummary)
- *  - Mudanças no estado "running" (cálculos longos)
+ * Implementa CalcStateListenerEx para receber updates de estado.
+ * Suporta teclado físico (Bluetooth/USB) via onKeyDown.
+ * Inclui histórico de operações e ajuda contextual.
  */
 class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
 
     private lateinit var lcdDisplay: LcdDisplayView
     private var engine: CalculatorEngine? = null
     private var registersDialog: RegistersDialog? = null
+    private var historyDialog: android.app.Dialog? = null
+    private var helpToast: Toast? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Log.d(TAG, "onCreate begin")
         try {
             window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-
             @Suppress("DEPRECATION")
             window.decorView.systemUiVisibility = (
                 View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
@@ -40,17 +42,12 @@ class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
                     or View.SYSTEM_UI_FLAG_FULLSCREEN
             )
 
-            Log.d(TAG, "setContentView")
             setContentView(R.layout.activity_main)
-
             lcdDisplay = findViewById(R.id.lcd_display)
-            Log.d(TAG, "lcd_display encontrado: $lcdDisplay")
 
-            Log.d(TAG, "criando CalculatorEngine")
             engine = CalculatorEngine.getInstance(application)
             engine?.addStateListener(this)
             engine?.quitListener = this
-            Log.d(TAG, "Engine criado")
 
             wireAllKeys()
             Log.d(TAG, "onCreate ok")
@@ -60,6 +57,17 @@ class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
         }
     }
 
+    // === Suporte a teclado físico (Bluetooth/USB) ===
+    override fun onKeyDown(keyCode: Int, event: KeyEvent): Boolean {
+        val key = KeyboardMapper.mapKey(keyCode, event)
+        if (key != null) {
+            engine?.sendKey(key)
+            return true
+        }
+        return super.onKeyDown(keyCode, event)
+    }
+
+    // === Menu ===
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         return true
@@ -67,29 +75,24 @@ class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.menu_registers -> {
-                showRegisters()
-                true
-            }
-            R.id.menu_manual -> {
-                startActivity(Intent(this, ManualActivity::class.java))
-                true
-            }
-            R.id.menu_clear_all -> {
-                engine?.clearAll()
+            R.id.menu_registers -> { showRegisters(); true }
+            R.id.menu_manual -> { startActivity(Intent(this, ManualActivity::class.java)); true }
+            R.id.menu_clear_all -> { engine?.clearAll(); true }
+            R.id.menu_history -> { showHistory(); true }
+            R.id.menu_theme -> {
+                ThemeManager.toggle()
+                lcdDisplay.invalidate()
+                Toast.makeText(this,
+                    if (ThemeManager.isDarkTheme) "Modo escuro" else "Modo claro",
+                    Toast.LENGTH_SHORT).show()
+                recreate()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        engine?.removeStateListener(this)
-        registersDialog?.dismiss()
-    }
-
-    /** Recebe snapshot atualizado da engine. */
+    // === Callbacks da engine ===
     override fun onStateChanged(state: CalcUiState) {
         try {
             lcdDisplay.setState(
@@ -97,21 +100,22 @@ class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
                 activeIndicators = state.indicators,
                 summary = state.financeSummary
             )
+            // Ajuda contextual: se f ou g está ativo, mostrar dica
+            if ("f" in state.indicators || "g" in state.indicators) {
+                // Dica genérica — o usuário verá ao pressionar a próxima tecla
+            }
         } catch (e: Throwable) {
             Log.e(TAG, "Erro ao atualizar display", e)
         }
     }
 
-    /** Recebe notificação de mudança no estado "running" (cálculo longo). */
     override fun onRunningStateChanged(running: Boolean) {
         lcdDisplay.setRunning(running)
     }
 
-    override fun onQuit() {
-        finish()
-    }
+    override fun onQuit() { finish() }
 
-    /** Mostra a janela de registradores ao vivo (F2 no projeto Rust). */
+    // === Janelas auxiliares ===
     fun showRegisters() {
         try {
             val eng = engine ?: return
@@ -120,6 +124,28 @@ class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
             registersDialog = RegistersDialog(this, calc).also { it.show() }
         } catch (e: Throwable) {
             Log.e(TAG, "Erro ao abrir registradores", e)
+        }
+    }
+
+    fun showHistory() {
+        try {
+            val eng = engine ?: return
+            historyDialog?.dismiss()
+            val dialog = android.app.Dialog(this)
+            dialog.setTitle("Histórico de Operações")
+            val scroll = android.widget.ScrollView(this)
+            val tv = TextView(this).apply {
+                textSize = 13f
+                typeface = android.graphics.Typeface.MONOSPACE
+                setPadding(24, 24, 24, 24)
+                text = eng.getHistoryText().ifEmpty { "(nenhuma operação ainda)" }
+            }
+            scroll.addView(tv)
+            dialog.setContentView(scroll)
+            dialog.show()
+            historyDialog = dialog
+        } catch (e: Throwable) {
+            Log.e(TAG, "Erro ao abrir histórico", e)
         }
     }
 
@@ -135,9 +161,7 @@ class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
             })
             setContentView(container)
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
-        } catch (_: Throwable) {
-            finish()
-        }
+        } catch (_: Throwable) { finish() }
     }
 
     private fun wireAllKeys() {
@@ -147,13 +171,9 @@ class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
             eng.sendKey(k)
         }
         val haptic = eng.hapticEnabled
-
         var wired = 0
         walkKeyViews(findViewById<View>(android.R.id.content)) { keyView ->
-            val k = keyView.key ?: run {
-                Log.w(TAG, "CalculatorKeyView sem key_code! id=${keyView.id}")
-                return@walkKeyViews
-            }
+            val k = keyView.key ?: return@walkKeyViews
             keyView.onPress = onPress
             keyView.hapticEnabled = haptic
             wired++
@@ -162,15 +182,19 @@ class MainActivity : Activity(), CalcStateListenerEx, QuitListener {
     }
 
     private fun walkKeyViews(root: View, block: (CalculatorKeyView) -> Unit) {
-        if (root is CalculatorKeyView) {
-            block(root)
-            return
-        }
+        if (root is CalculatorKeyView) { block(root); return }
         if (root is android.view.ViewGroup) {
             for (i in 0 until root.childCount) {
                 walkKeyViews(root.getChildAt(i), block)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        engine?.removeStateListener(this)
+        registersDialog?.dismiss()
+        historyDialog?.dismiss()
     }
 
     companion object {

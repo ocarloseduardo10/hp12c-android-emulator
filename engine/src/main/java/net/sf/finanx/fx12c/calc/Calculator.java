@@ -1817,28 +1817,29 @@ public class Calculator {
         }
 
         protected void doKey22() throws CalculatorException {
-                if (flg.getF() == 1) {
-
-                        // Shows a message: "Not Available Sorry"
-                        this.showDisplayMessage(" N.A. Sorry ");
-                        flg.toggleF();
-                        stp.setOp(Op.OP_YTM);
-                        dsp.setStatus(Display.STATUS_READY);
-
-                        // TODO: This piece of code is ready to work
-                        // but the function bondYield is not yet.
-                        // A message like "N/A Sorry" will be shown in the
-                        // display until I can rewrite that function again.
-                        /*
-                         * dt = new Date[2];
-                         * 
-                         * HP12CbondYield(fin.getPv(), fin.getPmt(), dt[1], dt[0]);
-                         * stk.put(HP12CbondYield(fin.getPv(), fin.getPmt(), dt[1], dt[0]));
-                         * 
-                         * flg.toggleF(); stp.setStep(Combo.OP_F_RECIPROCAL);
-                         * dsp.setStatus(Display.STATUS_OUTPUT);
-                         */
-
+		if (flg.getF() == 1) {
+			// f YTM: calcula rendimento ate vencimento
+			// Y = data de liquidacao, X = data de vencimento
+			// PV = preco, PMT = cupom -> X = rendimento (tambem em i)
+			try {
+				Number xNum = stk.get(0);
+				Number yNum = stk.get(1);
+				java.util.Calendar calX = net.sf.finanx.fx12c.memory.Stack.numberToDate(xNum, flg.getDmy() == 1);
+				java.util.Calendar calY = net.sf.finanx.fx12c.memory.Stack.numberToDate(yNum, flg.getDmy() == 1);
+				net.sf.finanx.fx12c.utils.Date settleDate = new net.sf.finanx.fx12c.utils.Date(
+					calY.get(java.util.Calendar.YEAR), calY.get(java.util.Calendar.MONTH) + 1, calY.get(java.util.Calendar.DAY_OF_MONTH));
+				net.sf.finanx.fx12c.utils.Date matureDate = new net.sf.finanx.fx12c.utils.Date(
+					calX.get(java.util.Calendar.YEAR), calX.get(java.util.Calendar.MONTH) + 1, calX.get(java.util.Calendar.DAY_OF_MONTH));
+				double ytm = net.sf.finanx.fx12c.memory.FinanceMemory.bondYield(
+					fin.getPv().d(), fin.getPmt().d(), settleDate, matureDate);
+				fin.setI(Number.getInstance(ytm));
+				stk.set(0, Number.getInstance(ytm));
+				flg.toggleF();
+				stp.setOp(Op.OP_YTM);
+				dsp.setStatus(Display.STATUS_OUTPUT);
+			} catch (CalculatorException e) {
+				this.showError(e);
+			}
                 } else if (flg.getG() == 1) {
                         stk.exp();
                         flg.toggleG();

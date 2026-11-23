@@ -5,9 +5,17 @@
         android:title="Registradores (F2)"
         android:icon="@android:drawable/ic_menu_view" />
     <item
+        android:id="@+id/menu_history"
+        android:title="Histórico de operações"
+        android:icon="@android:drawable/ic_menu_recent_history" />
+    <item
         android:id="@+id/menu_manual"
         android:title="Manual"
         android:icon="@android:drawable/ic_menu_help" />
+    <item
+        android:id="@+id/menu_theme"
+        android:title="Alternar tema (escuro/claro)"
+        android:icon="@android:drawable/ic_menu_day" />
     <item
         android:id="@+id/menu_clear_all"
         android:title="Limpar tudo"

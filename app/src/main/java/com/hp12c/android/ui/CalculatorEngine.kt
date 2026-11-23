@@ -58,6 +58,9 @@ class CalculatorEngine(app: Application) {
     @Volatile var soundEnabled: Boolean = false
         private set
 
+    /** Histórico de operações (últimas 100 teclas). */
+    private val history = OperationHistory(maxSize = 100)
+
     init {
         Log.d(TAG, "CalculatorEngine init begin")
         loadPersistedState()
@@ -82,7 +85,8 @@ class CalculatorEngine(app: Application) {
     @Synchronized
     fun sendKey(key: Key) {
         Log.d(TAG, "sendKey: $key (code=${key.code})")
-        // Indicar "running" para operações potencialmente longas (IRR, AMORT, NPV)
+        val displayBefore = try { calculator.display.string ?: "0" } catch (_: Throwable) { "0" }
+        // Indicar "running" para operações potencialmente longas (IRR, AMORT, NPV, YTM)
         val isLongOp = key == Key.KEY_15 || key == Key.KEY_13 || key == Key.KEY_14 || key == Key.KEY_11
         if (isLongOp) {
             running = true
@@ -94,13 +98,21 @@ class CalculatorEngine(app: Application) {
             Log.d(TAG, "sendKey: processado, chamando pushSnapshot")
         } catch (e: CalculatorException) {
             Log.e(TAG, "CalculatorException em sendKey($key)", e)
-            // Motor já tratou e setou mensagem de erro no display.
         } catch (e: Throwable) {
             Log.e(TAG, "Throwable em sendKey($key)", e)
             e.printStackTrace()
         }
         running = false
         notifyRunning(false)
+        // Registrar no histórico
+        val displayAfter = try { calculator.display.string ?: "0" } catch (_: Throwable) { "0" }
+        history.add(HistoryEntry(
+            key = key,
+            keyName = key.name,
+            displayBefore = displayBefore,
+            displayAfter = displayAfter,
+            timestamp = System.currentTimeMillis()
+        ))
         pushSnapshot(key)
         saveState()
     }
@@ -226,6 +238,12 @@ class CalculatorEngine(app: Application) {
 
     /** Acesso ao motor (para testes). */
     fun getEngine(): Calculator = calculator
+
+    /** Retorna o texto formatado do histórico de operações. */
+    fun getHistoryText(): String = history.toText()
+
+    /** Limpa o histórico de operações. */
+    fun clearHistory() = history.clear()
 
     companion object {
         private const val TAG = "HP12C/Engine"
