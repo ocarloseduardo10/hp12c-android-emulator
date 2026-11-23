@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Layout principal — estilo HP 12C Platinum.
+  Duas seções lado a lado:
+   - Esquerda (50%): teclas de função (n, i, PV, PMT, FV, etc.) — 5 cols × 4 rows
+   - Direita (50%): teclado numérico + operadores — 5 cols × 4 rows
+  O "0" é largo (ocupa 2 colunas), como na calculadora física.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/hp_background"
+    android:padding="6dp">
+
+    <!-- Corpo da calculadora -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:background="@color/hp_body_dark"
+        android:padding="6dp">
+
+        <!-- Display LCD — altura fixa 100dp -->
+        <com.hp12c.android.ui.LcdDisplayView
+            android:id="@+id/lcd_display"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Teclado dividido em 2 seções -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:baselineAligned="false">
+
+            <!-- ===== SEÇÃO ESQUERDA: Teclas de Função (5 cols × 4 rows) ===== -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginEnd="3dp">
+
+                <!-- Linha 1 esquerda: n, i, PV, PMT, FV -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_n"   app:key_code="11" app:key_main="n"   app:key_top="AMORT" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_i"   app:key_code="12" app:key_main="i"   app:key_top="INT"   app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_pv"  app:key_code="13" app:key_main="PV"  app:key_top="NPV"   app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_pmt" app:key_code="14" app:key_main="PMT" app:key_top="RND"   app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_fv"  app:key_code="15" app:key_main="FV"  app:key_top="IRR"   app:key_color="BEIGE" style="@style/HPKey" />
+                </LinearLayout>
+
+                <!-- Linha 2 esquerda: yˣ, 1/x, %T, Δ%, % -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_pow"  app:key_code="21" app:key_main="yˣ"  app:key_top="BOND"  app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_inv"  app:key_code="22" app:key_main="1/x" app:key_top="YTM"   app:key_bottom="eˣ" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_pctt" app:key_code="23" app:key_main="%T"  app:key_top="SL"   app:key_bottom="ln"  app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_delp" app:key_code="24" app:key_main="Δ%"  app:key_top="SOYD" app:key_bottom="FRAC" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_pct"  app:key_code="25" app:key_main="%"   app:key_top="DB"   app:key_bottom="INTG" app:key_color="BEIGE" style="@style/HPKey" />
+                </LinearLayout>
+
+                <!-- Linha 3 esquerda: R/S, SST, R↓, x↔y, CLx -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_rs"   app:key_code="31" app:key_main="R/S" app:key_top="PR"   app:key_bottom="PSE" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_sst"  app:key_code="32" app:key_main="SST" app:key_top="Σ"   app:key_bottom="BST" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_rdown" app:key_code="33" app:key_main="R↓"  app:key_top="PRGM"  app:key_bottom="GTO" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_swap"  app:key_code="34" app:key_main="x↔y" app:key_top="FIN"   app:key_bottom="x≤y" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_clx"  app:key_code="35" app:key_main="CLx" app:key_top="REG"   app:key_bottom="x=0" app:key_color="BEIGE" style="@style/HPKey" />
+                </LinearLayout>
+
+                <!-- Linha 4 esquerda: STO, RCL, g, f, ENTER -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_sto"  app:key_code="44" app:key_main="STO" app:key_top="CLEAR" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_rcl"  app:key_code="45" app:key_main="RCL" app:key_top="PREFIX" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_g"    app:key_code="43" app:key_main="g"   app:key_color="BLUE"  style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_f"    app:key_code="42" app:key_main="f"   app:key_color="ORANGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_enter" app:key_code="36" app:key_main="ENTER" app:key_top="PREFIX" app:key_color="ORANGE" style="@style/HPKey" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- ===== SEÇÃO DIREITA: Teclado Numérico + Operadores (5 cols × 4 rows) ===== -->
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:layout_marginStart="3dp">
+
+                <!-- Linha 1 direita: 7, 8, 9, ÷, EEX -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_7"   app:key_code="7"  app:key_main="7"   app:key_top="BEG" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_8"   app:key_code="8"  app:key_main="8"   app:key_top="END" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_9"   app:key_code="9"  app:key_main="9"   app:key_top="MEM" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_div"  app:key_code="10" app:key_main="÷"   app:key_top="PRICE" app:key_bottom="√"  app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_eex"  app:key_code="26" app:key_main="EEX" app:key_bottom="ΔDYS" app:key_color="BEIGE" style="@style/HPKey" />
+                </LinearLayout>
+
+                <!-- Linha 2 direita: 4, 5, 6, ×, CHS -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_4"   app:key_code="4"  app:key_main="4"   app:key_top="x̄w" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_5"   app:key_code="5"  app:key_main="5"   app:key_top="x̄r" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_6"   app:key_code="6"  app:key_main="6"   app:key_top="x̄"  app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_mul"  app:key_code="20" app:key_main="×"   app:key_top="Δ%" app:key_bottom="FRAC" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_chs"  app:key_code="16" app:key_main="CHS" app:key_top="DATE" app:key_color="BEIGE" style="@style/HPKey" />
+                </LinearLayout>
+
+                <!-- Linha 3 direita: 1, 2, 3, −, ON -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_1"   app:key_code="1"  app:key_main="1"   app:key_top="x̄r" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_2"   app:key_code="2"  app:key_main="2"   app:key_top="s"  app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_3"   app:key_code="3"  app:key_main="3"   app:key_top="x̄"  app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_sub"  app:key_code="30" app:key_main="−"   app:key_top="12÷" app:key_bottom="12x" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_on"   app:key_code="41" app:key_main="ON"  app:key_color="DARK"  style="@style/HPKey" />
+                </LinearLayout>
+
+                <!-- Linha 4 direita: 0 (largo, peso 2), ., Σ+, + -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <com.hp12c.android.ui.CalculatorKeyView
+                        android:id="@+id/key_0"
+                        app:key_code="0"
+                        app:key_main="0"
+                        app:key_color="BEIGE"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="2"
+                        android:layout_margin="2dp" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_dot"   app:key_code="48" app:key_main="."   app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_sigma" app:key_code="49" app:key_main="Σ+" app:key_top="Σ-" app:key_bottom="s" app:key_color="BEIGE" style="@style/HPKey" />
+                    <com.hp12c.android.ui.CalculatorKeyView android:id="@+id/key_add"  app:key_code="40" app:key_main="+"   app:key_top="STO+" app:key_color="BEIGE" style="@style/HPKey" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

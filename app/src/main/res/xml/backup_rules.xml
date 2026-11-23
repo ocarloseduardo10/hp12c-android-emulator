@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Regras de backup: todo o estado da calculadora é persistido em
+     SharedPreferences via DataStore. Permitimos backup dos dados do app. -->
+<full-backup-content>
+    <include domain="sharedpref" path="."/>
+</full-backup-content>

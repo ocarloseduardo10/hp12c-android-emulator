@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base MÍNIMO — apenas framework Android, sem dependências de
+         AppCompat ou Material Components. Disponível desde API 1.
+         A UI é desenhada via Views customizadas; este tema só controla a window. -->
+    <style name="Theme.HP12CMobile" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+        <item name="android:windowBackground">@color/hp_background</item>
+        <item name="android:statusBarColor">@color/hp_status_bar</item>
+        <item name="android:navigationBarColor">@color/hp_status_bar</item>
+    </style>
+</resources>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="key_corner">3dp</dimen>
+    <dimen name="key_elevation">2dp</dimen>
+    <dimen name="key_text_size">16sp</dimen>
+    <dimen name="key_text_size_small">11sp</dimen>
+    <dimen name="key_label_f_size">9sp</dimen>
+    <dimen name="key_label_g_size">9sp</dimen>
+    <dimen name="key_padding">4dp</dimen>
+    <dimen name="key_margin">2dp</dimen>
+    <dimen name="lcd_text_size">36sp</dimen>
+    <dimen name="lcd_indicator_size">11sp</dimen>
+    <dimen name="lcd_padding">12dp</dimen>
+</resources>

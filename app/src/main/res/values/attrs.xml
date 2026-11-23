@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Atributos custom das Views HP 12C -->
+    <declare-styleable name="CalculatorKeyView">
+        <!-- Código da tecla (int, correspondente ao enum Key do motor finanx-12c) -->
+        <attr name="key_code" format="integer" />
+        <!-- Texto principal da tecla -->
+        <attr name="key_main" format="string" />
+        <!-- Texto laranja (função f) acima -->
+        <attr name="key_top" format="string" />
+        <!-- Texto azul (função g) abaixo -->
+        <attr name="key_bottom" format="string" />
+        <!-- Cor da tecla: BEIGE | ORANGE | BLUE | DARK -->
+        <attr name="key_color" format="enum">
+            <enum name="BEIGE"  value="0" />
+            <enum name="ORANGE" value="1" />
+            <enum name="BLUE"   value="2" />
+            <enum name="DARK"   value="3" />
+        </attr>
+    </declare-styleable>
+</resources>

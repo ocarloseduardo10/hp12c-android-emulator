@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Dark body -->
+    <path android:fillColor="#1A1A1A"
+        android:pathData="M10,30 h88 a4,4 0 0 1 4,4 v44 a4,4 0 0 1 -4,4 h-88 a4,4 0 0 1 -4,-4 v-44 a4,4 0 0 1 4,-4 z" />
+
+    <!-- LCD screen -->
+    <path android:fillColor="#9CABB0"
+        android:pathData="M16,38 h76 a2,2 0 0 1 2,2 v14 a2,2 0 0 1 -2,2 h-76 a2,2 0 0 1 -2,-2 v-14 a2,2 0 0 1 2,-2 z" />
+    <path android:fillColor="#0B1410"
+        android:pathData="M22,46 h60 v4 h-60 z" />
+
+    <!-- Row of keys (simplified) -->
+    <path android:fillColor="#D6C8A9"
+        android:pathData="M14,62 h8 v8 h-8 z M24,62 h8 v8 h-8 z M34,62 h8 v8 h-8 z M44,62 h8 v8 h-8 z M54,62 h8 v8 h-8 z M64,62 h8 v8 h-8 z M74,62 h8 v8 h-8 z M84,62 h8 v8 h-8 z" />
+    <path android:fillColor="#E87722"
+        android:pathData="M14,72 h8 v8 h-8 z" />
+    <path android:fillColor="#2D6CC9"
+        android:pathData="M24,72 h8 v8 h-8 z" />
+    <path android:fillColor="#D6C8A9"
+        android:pathData="M34,72 h8 v8 h-8 z M44,72 h8 v8 h-8 z M54,72 h8 v8 h-8 z M64,72 h8 v8 h-8 z M74,72 h8 v8 h-8 z M84,72 h8 v8 h-8 z" />
+
+</vector>

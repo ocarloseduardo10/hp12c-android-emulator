@@ -1,0 +1,17 @@
+# Build artifacts
+build/
+.gradle/
+.idea/
+*.iml
+local.properties
+.cxx/
+
+# Gradle
+gradle/wrapper/gradle-wrapper.jar.bak
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Identidade do app -->
+    <string name="app_name">HP 12C Mobile</string>
+    <string name="app_short_name">HP 12C</string>
+
+    <!-- Display / indicadores -->
+    <string name="indicator_begin">BEGIN</string>
+    <string name="indicator_dmy">D.MY</string>
+    <string name="indicator_c">C</string>
+    <string name="indicator_prgm">PRGM</string>
+    <string name="indicator_f">f</string>
+    <string name="indicator_g">g</string>
+
+    <!-- Menu overflow -->
+    <string name="menu_about">Sobre</string>
+    <string name="menu_help">Ajuda</string>
+    <string name="menu_settings">Configurações</string>
+    <string name="menu_clear_all">Limpar tudo</string>
+
+    <!-- Sobre -->
+    <string name="about_title">Sobre o HP 12C Mobile</string>
+    <string name="about_version">Versão %1$s</string>
+    <string name="about_description">Emulador profissional da calculadora financeira HP 12C, com motor de cálculo em Java puro (BigDecimal, 34 dígitos) derivado do projeto Finanx 12c (MIT, Fabio Lima). Interface em Jetpack Compose, fiel ao layout físico da HP 12C, com suporte a modo horizontal e vertical, indicadores de estado BEGIN/END/D.MY/C/PRGM/f/g, e operações RPN completas.</string>
+    <string name="about_engine">Motor: Finanx 12c (MIT) — 75 testes JUnit validados contra valores de referência HP 12C.</string>
+    <string name="about_disclaimer">HP 12C é marca registrada da HP Inc. Este aplicativo independente não é afiliado, endossado ou patrocinado pela HP Inc.</string>
+
+    <!-- Ajuda contextual -->
+    <string name="help_title">Ajuda rápida</string>
+    <string name="help_rpn">RPN: a HP 12C usa Notação Polonesa Reversa. Para 2 + 3, digite: 2 ENTER 3 +</string>
+    <string name="help_prefix">Tecla f: ativa funções laranja. Tecla g: ativa funções azuis.</string>
+    <string name="help_tvm">TVM: entre com 4 de 5 valores (n, i, PV, PMT, FV) e calcule o quinto.</string>
+
+    <!-- Acessibilidade: descrições de teclas -->
+    <string name="key_desc_enter">ENTER: empilha o valor X</string>
+    <string name="key_desc_chs">CHS: troca sinal de X</string>
+    <string name="key_desc_clx">CLx: limpa registrador X</string>
+    <string name="key_desc_on">Liga/Desliga: pressionar ON duas vezes para sair</string>
+</resources>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Paleta de cores inspirada na HP 12C Platinum física.
+      Corpo: grafite escuro. Teclado: bege/cream com teclas laranja (f) e azul (g).
+      Display: LCD verde-azulado com dígitos pretos.
+    -->
+    <color name="hp_body_dark">#1A1A1A</color>
+    <color name="hp_body_light">#2A2A2A</color>
+    <color name="hp_lcd_bg">#B8C5C0</color>
+    <color name="hp_lcd_bg_dim">#9DA8A4</color>
+    <color name="hp_lcd_text">#0B1410</color>
+    <color name="hp_lcd_dim">#7A8480</color>
+
+    <!-- Teclas -->
+    <color name="hp_key_beige">#D6C8A9</color>
+    <color name="hp_key_beige_pressed">#BFB290</color>
+    <color name="hp_key_beige_text">#1A1A1A</color>
+
+    <color name="hp_key_orange">#E87722</color>
+    <color name="hp_key_orange_pressed">#C9651A</color>
+    <color name="hp_key_orange_text">#1A1A1A</color>
+
+    <color name="hp_key_blue">#2D6CC9</color>
+    <color name="hp_key_blue_pressed">#21548F</color>
+    <color name="hp_key_blue_text">#FFFFFF</color>
+
+    <color name="hp_key_dark">#3A3A3A</color>
+    <color name="hp_key_dark_pressed">#2A2A2A</color>
+    <color name="hp_key_dark_text">#FFFFFF</color>
+
+    <!-- Labels acima/abaixo das teclas -->
+    <color name="hp_label_orange">#E87722</color>
+    <color name="hp_label_blue">#2D6CC9</color>
+    <color name="hp_label_gray">#6B6B6B</color>
+
+    <!-- Tela / fundo -->
+    <color name="hp_background">#0F0F0F</color>
+    <color name="hp_background_light">#FAFAFA</color>
+    <color name="hp_status_bar">#000000</color>
+
+    <!-- Material 3 tokens -->
+    <color name="seed">#E87722</color>
+    <color name="md_theme_light_primary">#B45309</color>
+    <color name="md_theme_light_onPrimary">#FFFFFF</color>
+    <color name="md_theme_light_secondary">#2D6CC9</color>
+    <color name="md_theme_light_onSecondary">#FFFFFF</color>
+    <color name="md_theme_light_background">#FAFAFA</color>
+    <color name="md_theme_light_onBackground">#1A1A1A</color>
+    <color name="md_theme_light_surface">#FFFFFF</color>
+    <color name="md_theme_light_onSurface">#1A1A1A</color>
+
+    <color name="md_theme_dark_primary">#FFB87A</color>
+    <color name="md_theme_dark_onPrimary">#1A1A1A</color>
+    <color name="md_theme_dark_secondary">#5A8FE0</color>
+    <color name="md_theme_dark_onSecondary">#FFFFFF</color>
+    <color name="md_theme_dark_background">#0F0F0F</color>
+    <color name="md_theme_dark_onBackground">#FAFAFA</color>
+    <color name="md_theme_dark_surface">#1A1A1A</color>
+    <color name="md_theme_dark_onSurface">#FAFAFA</color>
+</resources>
+<color name="black">#000000</color>
+<color name="white">#FFFFFF</color>
