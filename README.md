@@ -189,35 +189,6 @@ adb install hp12c-mobile-debug.apk
 HP 12C é marca registrada da HP Inc. Este aplicativo é uma ferramenta
 educacional independente e não é afiliada, endossada ou patrocinada pela HP Inc.
 
-## Aviso matemático
-
-Embora o motor use BigDecimal com precisão DECIMAL128 (34 dígitos) e seja
-validado por 75 testes contra valores de referência HP 12C, sempre
-verifique cálculos financeiros críticos com fontes adicionais.
-
-## Limitações conhecidas
-
-1. **Modo de programação**: a HP 12C física suporta gravação de sequências de
-   teclas (P/R, SST, BST, GTO). O motor finanx-12c implementa estas funções
-   parcialmente; o playback de programas não está completo.
-2. **Bond yield (YTM)**: a função `f` + `1/x` exibe "N.A. Sorry" no display
-   porque o algoritmo de yield to maturity ainda não foi implementado no
-   motor finanx-12c (a função de preço `BOND` funciona).
-3. **Conversão de taxas fora do padrão 12÷/12×**: apenas conversão anual ↔ mensal
-   está exposta na UI. Conversões para períodos diários ou trimestrais exigem
-   uso da fórmula manual via yˣ e 1/x.
-4. **Layout em telas pequenas (<3.5")**: o teclado pode ficar apertado em
-   celulares muito antigos. Recomendado Android 7.0+ com tela ≥ 4".
-
-## Roadmap
-
-- [ ] Implementar YTM (yield to maturity) no motor
-- [ ] Adicionar modo de programação completo (P/R, SST, BST, GTO)
-- [ ] Histórico de operações (últimas N teclas pressionadas)
-- [ ] Modo escuro/claro alternável pelo usuário
-- [ ] Ajuda contextual embutida (exemplos práticos)
-- [ ] Suporte a atalhos de teclado físico (Bluetooth keyboards)
-
 ## Build manual — detalhes técnicos
 
 O projeto pode ser construído SEM Gradle usando `scripts/build_apk.sh`.
