@@ -1972,7 +1972,10 @@ public class Calculator {
                 if (flg.getF() == 1) {
                         flg.toggleF();
                 } else if (flg.getG() == 1) {
+                        // g + − = BACKSPACE (apagar último dígito digitado)
+                        dsp.backspace();
                         flg.toggleG();
+                        stp.setOp(Op.OP_NULL);
                 } else if (flg.getSto() > 0) {
                         stp.setOp(Op.OP_STO_SUB);
                 } else if (flg.getRcl() > 0) {

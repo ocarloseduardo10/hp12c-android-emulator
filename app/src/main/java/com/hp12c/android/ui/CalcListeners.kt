@@ -18,6 +18,14 @@ interface CalcStateListener {
 }
 
 /**
+ * Listener estendido — também notifica mudanças no estado "running"
+ * (cálculos longos como IRR, AMORT, NPV).
+ */
+interface CalcStateListenerEx : CalcStateListener {
+    fun onRunningStateChanged(running: Boolean)
+}
+
+/**
  * Listener simples para "quit" (quando o usuário pressiona ON+ON).
  */
 interface QuitListener {

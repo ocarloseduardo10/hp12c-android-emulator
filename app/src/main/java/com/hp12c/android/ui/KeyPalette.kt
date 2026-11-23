@@ -4,20 +4,17 @@ import android.graphics.Color
 
 /**
  * Cores de fundo das teclas, com fidelidade à HP 12C física.
+ * Atualizado com valores extraídos do skin.json do projeto hp12c-emulator-rust (MIT).
  */
 enum class KeyColor {
     BEIGE,    // teclas numéricas e financeiras (bege/cream)
-    ORANGE,   // tecla ENTER (laranja vibrante)
-    BLUE,     // não usado em teclas inteiras, apenas em labels
+    ORANGE,   // tecla ENTER e f (dourado)
+    BLUE,     // tecla g (azul)
     DARK      // tecla ON (grafite)
 }
 
 /**
- * Paleta de cores da HP 12C (cores ARGB como Int).
- * Inspirada na HP 12C Platinum física:
- *  - Corpo grafite escuro
- *  - LCD verde-azulado
- *  - Teclas laranja (f) e azul (g)
+ * Paleta de cores da HP 12C — valores exatos do skin.json.
  */
 data class KeyPalette(
     val beigeBg: Int,
@@ -33,23 +30,26 @@ data class KeyPalette(
     val labelGray: Int,
 ) {
     companion object {
+        /** Paleta padrão com cores exatas da HP 12C física. */
         val Default = KeyPalette(
-            beigeBg = Color.parseColor("#D6C8A9"),
-            beigeFg = Color.parseColor("#1A1A1A"),
-            orangeBg = Color.parseColor("#E87722"),
-            orangeFg = Color.parseColor("#FFFFFF"),
-            blueBg = Color.parseColor("#2D6CC9"),
+            beigeBg = Color.parseColor("#D6C8A9"),  // bege cream (mantém)
+            beigeFg = Color.parseColor("#101010"),
+            // Laranja/dourado da tecla f e ENTER
+            orangeBg = HpColors.fKeyTop(),         // #e3a53a
+            orangeFg = Color.parseColor(HpColors.PREFIX_KEY_TEXT),  // #101010
+            // Azul da tecla g
+            blueBg = HpColors.gKeyTop(),            // #4f9fdc
             blueFg = Color.parseColor("#FFFFFF"),
-            darkBg = Color.parseColor("#3A3A3A"),
+            darkBg = Color.parseColor("#3A3A3A"),  // ON (mantém)
             darkFg = Color.parseColor("#FFFFFF"),
-            labelOrange = Color.parseColor("#E87722"),
-            labelBlue = Color.parseColor("#2D6CC9"),
-            labelGray = Color.parseColor("#6B6B6B"),
+            // Labels das funções
+            labelOrange = HpColors.fLabel(),        // #e2a93b (dourado)
+            labelBlue = HpColors.gLabel(),           // #6bb6ea (azul claro)
+            labelGray = Color.parseColor("#6B6B6B")
         )
     }
 }
 
-/** Resolvedor de cor de fundo de uma tecla. */
 fun KeyColor.background(p: KeyPalette): Int = when (this) {
     KeyColor.BEIGE -> p.beigeBg
     KeyColor.ORANGE -> p.orangeBg
@@ -57,7 +57,6 @@ fun KeyColor.background(p: KeyPalette): Int = when (this) {
     KeyColor.DARK -> p.darkBg
 }
 
-/** Resolvedor de cor de texto de uma tecla. */
 fun KeyColor.foreground(p: KeyPalette): Int = when (this) {
     KeyColor.BEIGE -> p.beigeFg
     KeyColor.ORANGE -> p.orangeFg

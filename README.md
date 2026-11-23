@@ -1,158 +1,245 @@
-# HP 12C Android Emulator
+# HP 12C Mobile — Emulador Financeiro para Android
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Platform: Android](https://img.shields.io/badge/Platform-Android-green.svg)](https://developer.android.com)
-[![Language: Kotlin + Java](https://img.shields.io/badge/Language-Kotlin%20%2B%20Java-orange.svg)](https://kotlinlang.org)
-[![Min SDK: 24](https://img.shields.io/badge/Min%20SDK-24%20(Android%207.0)-blue.svg)](https://developer.android.com/about/versions/nougat)
+Calculadora financeira profissional inspirada na HP 12C, com motor de cálculo em Java puro (BigDecimal, 34 dígitos de precisão) derivado do projeto **Finanx 12c** (MIT, Fabio Lima, 2007-2020) e interface em Kotlin + XML Views fiel ao layout físico da calculadora.
 
-> **RPN financial calculator for Android** — pure-Java BigDecimal engine (fork of [Finanx 12c](https://github.com/fabiolimace/finanx-12c), MIT) with a Kotlin UI inspired by the classic HP 12C physical calculator.
+## Status do projeto
 
-> ⚠️ **Disclaimer**: This is an independent **educational project** and is **not affiliated with, endorsed by, or sponsored by HP Inc.** "HP 12C" is a trademark of HP Inc. This emulator replicates essential functions for learning purposes.
+| Item | Estado |
+|------|--------|
+| Motor financeiro (Java, MIT) | ✅ 75 testes JUnit passando |
+| Interface HP 12C (Kotlin + Views) | ✅ Display LCD + 40 teclas |
+| Modo horizontal preferencial | ✅ `sensorLandscape` no manifest |
+| Modo vertical adaptativo | ✅ Layout LinearLayout responsivo |
+| Persistência de estado | ✅ SharedPreferences (JSON) |
+| Indicadores BEGIN/D.MY/C/PRGM/f/g | ✅ No display LCD |
+| APK assinado | ✅ v2 + v3 signature schemes |
+| Funciona offline | ✅ Sem permissões de rede |
+| Min SDK 24 (Android 7.0+) | ✅ ~98% dos dispositivos |
+| Target SDK 34 (Android 14) | ✅ Atualizado |
 
-## ✨ Features
-
-### Arithmetic & RPN
-- ✅ 4-register RPN stack (X, Y, Z, T) with proper lift/drop behavior
-- ✅ `+ - × ÷` with stack preservation
-- ✅ `yˣ`, `1/x`, `√`, `ln`, `eˣ`, `CHS`, `EEX`
-- ✅ `%`, `Δ%`, `%T` (percentage of total)
-
-### Financial (TVM)
-- ✅ `n` (periods), `i` (interest rate), `PV`, `PMT`, `FV`
-- ✅ `BEGIN` / `END` modes
-- ✅ `12÷` / `12×` (rate conversion)
-
-### Advanced Financial
-- ✅ `AMORT` (amortization)
-- ✅ `NPV` (net present value)
-- ✅ `IRR` (internal rate of return)
-- ✅ `BOND` (bond price)
-- ✅ Depreciation: `SL`, `SOYD`, `DB`
-- ✅ `RND` (rounding)
-
-### Statistics
-- ✅ `Σ+`, `Σ-` (data entry)
-- ✅ `x̄` (mean), `s` (std dev), `x̄w` (weighted mean)
-- ✅ Linear regression with `x̂r`, `ŷr`
-
-### Memory & Dates
-- ✅ 20 storage registers (`R0`-`R9`, `.0`-`.9`)
-- ✅ Memory arithmetic (`STO+`, `STO-`, `STO×`, `STO÷`, `RCL+`, ...)
-- ✅ `D.MY` / `M.DY` (date formats)
-- ✅ `ΔDYS` (days between dates), `DATE`
-
-### UI & Persistence
-- ✅ 39-key layout in two sections (function keys + numeric keypad), HP 12C Platinum style
-- ✅ LCD-style display with `BEGIN`, `D.MY`, `C`, `PRGM`, `f`, `g` indicators
-- ✅ SharedPreferences persistence (full state restored on reopen)
-- ✅ Haptic feedback on key press
-- ✅ 100% offline — no network permissions
-
-## 📊 Test Coverage
-
-The financial engine passes **75 JUnit tests** validating results against HP 12C reference values:
-
-| Suite | Tests | Coverage |
-|-------|-------|----------|
-| `CalculatorTest` | 4 | Basic arithmetic, %, RPN |
-| `StackTest` | 15+ | Stack behavior, dates, RPN operations |
-| `FinanceMemoryTest` | 10+ | TVM calculations |
-| `GeneralMemoryTest` | 10+ | Memory registers, statistics |
-| `ProgramMemoryTest` (1/2/3) | 20+ | Program memory |
-| `NumberTest` | 10+ | BigDecimal precision |
-
-Run tests:
-```bash
-cd engine
-./gradlew test
-```
-
-## 🏗️ Architecture
+## Estrutura do projeto
 
 ```
-hp12c-android-emulator/
-├── engine/                          # Java library (MIT — Fabio Lima)
-│   ├── src/main/java/net/sf/finanx/fx12c/
-│   │   ├── calc/                    # Calculator, Key, Op, Display, Flags
-│   │   ├── memory/                  # Stack, FinanceMemory, GeneralMemory
-│   │   ├── math/                    # Number (BigDecimal DECIMAL128)
-│   │   └── utils/                    # Date, Timer, StringEscape
-│   └── src/test/java/               # 75 JUnit tests
+hp12c-android/
+├── settings.gradle.kts          # Configuração Gradle multi-módulo
+├── build.gradle.kts              # Build script raiz (plugins AGP + Kotlin)
+├── gradle.properties             # JVM args, AndroidX, etc.
+├── local.properties              # Aponta para Android SDK
+├── proguard-rules.pro            # Regras de ofuscação (preventivas)
+├── gradle/wrapper/               # Gradle wrapper 8.7
 │
-├── app/                             # Kotlin Android app
-│   └── src/main/
-│       ├── AndroidManifest.xml      # sensorLandscape, minSdk 24, targetSdk 34
-│       ├── java/com/hp12c/android/ui/
-│       │   ├── MainActivity.kt      # Activity (framework, no AppCompat)
-│       │   ├── CalculatorEngine.kt  # Singleton Kotlin, manages engine
-│       │   ├── CalculatorKeyView.kt # Custom View per key
-│       │   ├── LcdDisplayView.kt    # Custom View for LCD display
-│       │   ├── HpKeyLayout.kt       # 39-key layout definition
-│       │   ├── KeyPalette.kt        # Colors (beige/orange/blue/dark)
-│       │   ├── StateRepository.kt   # JSON persistence
-│       │   └── CalcListeners.kt     # UI callbacks
-│       └── res/
-│           ├── layout/activity_main.xml  # 2-section keyboard layout
-│           ├── values/                   # colors, strings, styles, themes
-│           ├── drawable/                 # adaptive icon
-│           ├── mipmap-*/                # launcher icons (5 densities)
-│           └── xml/                      # backup rules
+├── engine/                       # Módulo Java puro (motor financeiro)
+│   ├── build.gradle.kts
+│   └── src/
+│       ├── main/java/net/sf/finanx/fx12c/
+│       │   ├── calc/             # Calculator, Key, Op, Display, Flags, etc.
+│       │   ├── memory/           # Stack, FinanceMemory, GeneralMemory, ProgramMemory
+│       │   ├── math/             # Number (BigDecimal de alta precisão)
+│       │   └── utils/            # Date, Timer, StringEscape
+│       └── test/java/            # 75 testes JUnit
 │
-├── gradle/wrapper/                  # Gradle 8.7 wrapper
-├── scripts/
-│   ├── build_apk.sh                 # Standalone APK build (no Gradle)
-│   └── download_libs.sh             # Download AndroidX dependencies
-└── build.gradle.kts, settings.gradle.kts, gradle.properties
+└── app/                          # Módulo Android (Kotlin)
+    ├── build.gradle.kts
+    └── src/main/
+        ├── AndroidManifest.xml   # package, permissions, activity, orientação
+        ├── java/com/hp12c/android/ui/
+        │   ├── MainActivity.kt          # Activity + LifecycleOwner
+        │   ├── CalculatorViewModel.kt   # MVVM com LiveData
+        │   ├── CalculatorKeyView.kt     # View custom para teclas
+        │   ├── LcdDisplayView.kt        # View custom para display LCD
+        │   ├── HpKeyLayout.kt           # Layout 4x10 das teclas HP 12C
+        │   ├── KeyPalette.kt           # Cores das teclas (bege/laranja/azul/escuro)
+        │   └── StateRepository.kt       # Persistência JSON em SharedPreferences
+        └── res/
+            ├── layout/activity_main.xml # 4x10 LinearLayout (paisagem)
+            ├── values/
+            │   ├── attrs.xml           # Styleables custom (key_code, key_main, etc.)
+            │   ├── colors.xml          # Paleta HP 12C
+            │   ├── strings.xml          # Strings PT-BR
+            │   ├── styles.xml           # Estilo HPKey
+            │   └── themes.xml           # Tema DeviceDefault.NoActionBar
+            ├── drawable/                # Ícone foreground/background vetorial
+            ├── mipmap-*/                # Ícone em 5 densidades
+            └── xml/                     # Backup rules
 ```
 
-## 🔧 Build
+## Como construir
 
-### Option 1: Android Studio (recommended)
-1. Clone: `git clone https://github.com/ocarloseduardo10/hp12c-android-emulator.git`
-2. Open in Android Studio
-3. Sync Gradle → Build → Run
+### Opção 1 — Android Studio (recomendado)
 
-### Option 2: Gradle CLI
+1. Abra o Android Studio
+2. `File` → `Open` → selecione a pasta `hp12c-android/`
+3. Aguarde a sincronização do Gradle (pode levar alguns minutos na primeira vez)
+4. `Build` → `Build Bundle(s) / APK(s)` → `Build APK(s)`
+5. O APK será gerado em `app/build/outputs/apk/debug/app-debug.apk`
+
+### Opção 2 — Linha de comando com Gradle
+
 ```bash
-./gradlew :app:assembleDebug
-# Output: app/build/outputs/apk/debug/app-debug.apk
+# Pré-requisitos:
+#  - JDK 17 ou 21
+#  - Android SDK com platform-tools, platforms;android-34, build-tools;34.0.0
+#  - Variáveis JAVA_HOME e ANDROID_HOME configuradas
+
+cd hp12c-android
+./gradlew :app:assembleDebug     # Debug APK
+./gradlew :app:assembleRelease   # Release APK (assinado com keystore de debug)
+
+# APK gerado em:
+#   app/build/outputs/apk/debug/app-debug.apk
+#   app/build/outputs/apk/release/app-release.apk
 ```
 
-### Option 3: Standalone build (no Gradle)
-Useful for environments with limited memory.
+### Opção 3 — Build manual (sem Gradle)
+
+Incluso neste projeto: `scripts/build_apk.sh`. Constrói o APK usando
+javac + kotlinc + d8 + aapt2 + apksigner diretamente. Útil para ambientes
+com restrições de memória onde o Gradle não consegue executar.
+
 ```bash
 ./scripts/build_apk.sh
+# APK gerado em: /home/z/my-project/download/hp12c-mobile-debug.apk
 ```
 
-## 📥 Install
+## Instalação
 
 ```bash
+# Habilitar fontes desconhecidas em Configurações > Segurança
 adb install hp12c-mobile-debug.apk
+
+# Ou copie o APK para o celular e toque para instalar
 ```
 
-Or copy the APK to your Android 7.0+ device and tap to install.
+## Funcionalidades implementadas
 
-## 🧪 Test the calculator
+### Operações RPN (Notação Polonesa Reversa)
+- Pilha de 4 registradores (X, Y, Z, T) com comportamento idêntico à HP 12C
+- Tecla ENTER (empilha), R↓ (rotaciona), x↔y (troca), CLx (limpa X)
+- LastX (recupera último X usado em operação)
 
-After installing, try:
-```
-2 ENTER 3 +      → 5.00
-100 ENTER 10 %   → 10.00
-360 n 6.5 i 200000 PV PMT  → -1,264.14  (mortgage payment)
-```
+### Operações aritméticas
+- `+ - × ÷` com preservação correta da pilha
+- `yˣ` (potenciação), `1/x` (recíproco), `√` (raiz)
+- `%` (porcentagem), `Δ%` (variação percentual), `%T` (porcentagem do total)
+- `CHS` (troca de sinal), `EEX` (notação científica)
 
-## 📜 License
+### Funções financeiras (TVM)
+- `n` (número de períodos), `i` (taxa de juros)
+- `PV` (valor presente), `PMT` (pagamento periódico), `FV` (valor futuro)
+- Cálculo automático de qualquer variável a partir das outras 4
+- `BEGIN` / `END` (pagamentos no início ou fim do período)
+- `12÷` e `12×` (conversão de taxas anuais ↔ mensais)
 
-**MIT License** — see [LICENSE](LICENSE)
+### Funções financeiras avançadas
+- `AMORT` (amortização)
+- `NPV` (valor presente líquido)
+- `IRR` (taxa interna de retorno)
+- `BOND` / `YTM` (preço e yield de títulos)
+- `SL`, `SOYD`, `DB` (depreciação: linear, soma dos dígitos, declínio)
+- `RND` (arredondamento conforme precisão configurada)
 
-- Engine: Copyright (c) 2007-2020 **Fabio Lima** ([finanx-12c](https://github.com/fabiolimace/finanx-12c))
-- Android port & UI: Copyright (c) 2026 **Carlos Santos** ([@ocarloseduardo10](https://github.com/ocarloseduardo10))
+### Funções estatísticas
+- `Σ+`, `Σ-` (entrada/remoção de dados)
+- `x̄` (média), `s` (desvio padrão)
+- `x̄r`, `x̄w` (média ponderada)
+- Regressão linear com `x̂r` e `ŷr`
 
-## 🙏 Acknowledgments
+### Funções de data
+- `D.MY` / `M.DY` (formato de data)
+- `ΔDYS` (dias entre datas)
+- `DATE` (data futura + dia da semana)
 
-- **Fabio Lima** — original Finanx 12c engine (MIT), the heart of this calculator
-- **HP Inc.** — design inspiration (this project is not affiliated with HP)
+### Memória e registradores
+- 20 registradores (R0-R9, .0-.9) com `STO` / `RCL`
+- Aritmética com memória (`STO+`, `STO-`, `STO×`, `STO÷`, `RCL+`, etc.)
+- `f CLEAR REG` (limpa todos os registradores)
+- `f CLEAR FIN` (limpa registradores financeiros)
+- `f CLEAR Σ` (limpa registradores estatísticos)
+- `f CLEAR PRGM` (limpa memória de programa)
 
-## ⚠️ Disclaimer
+### Configurações
+- Casas decimais: `f` + dígito (0-9) define precisão
+- Separador decimal: `ON` + `.` alterna entre ponto e vírgula
+- Persistência completa: estado da pilha, memória financeira, geral e
+  configurações são salvos em SharedPreferences e restaurados ao reabrir
 
-This software is provided "as is" without warranty. Always verify critical financial calculations with the actual HP 12C calculator or professional financial software.
+## Licenças
+
+### Motor financeiro (engine/)
+- **MIT License** — Copyright (c) 2007-2020 Fabio Lima
+- Origem: [finanx-12c](https://github.com/fabiolimace/finanx-12c)
+- 75 testes JUnit validados contra valores de referência HP 12C
+
+### Aplicativo Android (app/)
+- Código próprio, licença MIT
+- UI em Kotlin + XML Views, MVVM com LiveData
+- View customizadas (`CalculatorKeyView`, `LcdDisplayView`)
+
+### Bibliotecas de terceiros
+- AndroidX AppCompat 1.7.0 — Apache 2.0
+- AndroidX Core KTX 1.13.1 — Apache 2.0
+- Material Components for Android 1.12.0 — Apache 2.0
+- AndroidX Lifecycle 2.8.2 (runtime, viewmodel, livedata) — Apache 2.0
+- AndroidX Activity 1.9.0 — Apache 2.0
+- Kotlin Coroutines 1.7.3 — Apache 2.0
+- Kotlin Stdlib 1.9.24 — Apache 2.0
+
+## Marcas registradas
+
+HP 12C é marca registrada da HP Inc. Este aplicativo é uma ferramenta
+educacional independente e não é afiliada, endossada ou patrocinada pela HP Inc.
+
+## Aviso matemático
+
+Embora o motor use BigDecimal com precisão DECIMAL128 (34 dígitos) e seja
+validado por 75 testes contra valores de referência HP 12C, sempre
+verifique cálculos financeiros críticos com fontes adicionais.
+
+## Limitações conhecidas
+
+1. **Modo de programação**: a HP 12C física suporta gravação de sequências de
+   teclas (P/R, SST, BST, GTO). O motor finanx-12c implementa estas funções
+   parcialmente; o playback de programas não está completo.
+2. **Bond yield (YTM)**: a função `f` + `1/x` exibe "N.A. Sorry" no display
+   porque o algoritmo de yield to maturity ainda não foi implementado no
+   motor finanx-12c (a função de preço `BOND` funciona).
+3. **Conversão de taxas fora do padrão 12÷/12×**: apenas conversão anual ↔ mensal
+   está exposta na UI. Conversões para períodos diários ou trimestrais exigem
+   uso da fórmula manual via yˣ e 1/x.
+4. **Layout em telas pequenas (<3.5")**: o teclado pode ficar apertado em
+   celulares muito antigos. Recomendado Android 7.0+ com tela ≥ 4".
+
+## Roadmap
+
+- [ ] Implementar YTM (yield to maturity) no motor
+- [ ] Adicionar modo de programação completo (P/R, SST, BST, GTO)
+- [ ] Histórico de operações (últimas N teclas pressionadas)
+- [ ] Modo escuro/claro alternável pelo usuário
+- [ ] Ajuda contextual embutida (exemplos práticos)
+- [ ] Suporte a atalhos de teclado físico (Bluetooth keyboards)
+
+## Build manual — detalhes técnicos
+
+O projeto pode ser construído SEM Gradle usando `scripts/build_apk.sh`.
+Isto é útil quando:
+- O ambiente tem restrições de memória (< 4 GB RAM)
+- O Maven Central está rate-limitando downloads
+- Você quer entender o pipeline de build Android
+
+O script faz:
+1. Compila o engine Java com `javac --release 8` (bytecode Java 8 para máxima compatibilidade)
+2. Extrai `classes.jar` de cada AAR (apenas os que têm classes reais)
+3. Compila recursos com `aapt2 compile --dir`
+4. Linka o APK base com `aapt2 link` (gera `R.java`)
+5. Compila `R.java` com `javac` (gera `R.class`)
+6. Compila os fontes Kotlin com `K2JVMCompiler` (incluindo `R.class` no classpath)
+7. Empacota engine + app em JARs
+8. Converte todos os .class para `classes.dex` usando `d8` (R8 estável 8.5.35 —
+   as builds "dev" nos build-tools têm bug NPE em enums Java 21)
+9. Adiciona `classes.dex` ao APK base
+10. Assina com `apksigner` usando keystore de debug
+
+## Contato e contribuição
+
+Para reportar bugs ou contribuir, consulte o repositório de origem:
+- Motor: https://github.com/fabiolimace/finanx-12c (MIT, Fabio Lima)

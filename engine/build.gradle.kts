@@ -27,6 +27,8 @@ tasks.withType<JavaCompile> {
 
 dependencies {
     testImplementation("junit:junit:4.13.2")
+    // JSON parsing para os 242 vetores de teste do projeto hp12c-emulator-rust
+    testImplementation("org.json:json:20240303")
 }
 
 tasks.withType<Test> {

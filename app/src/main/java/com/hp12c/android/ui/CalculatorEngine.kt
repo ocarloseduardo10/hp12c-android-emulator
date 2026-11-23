@@ -82,6 +82,12 @@ class CalculatorEngine(app: Application) {
     @Synchronized
     fun sendKey(key: Key) {
         Log.d(TAG, "sendKey: $key (code=${key.code})")
+        // Indicar "running" para operações potencialmente longas (IRR, AMORT, NPV)
+        val isLongOp = key == Key.KEY_15 || key == Key.KEY_13 || key == Key.KEY_14 || key == Key.KEY_11
+        if (isLongOp) {
+            running = true
+            notifyRunning(true)
+        }
         try {
             calculator.keyPressed(key)
             calculator.keyReleased(key)
@@ -93,8 +99,24 @@ class CalculatorEngine(app: Application) {
             Log.e(TAG, "Throwable em sendKey($key)", e)
             e.printStackTrace()
         }
+        running = false
+        notifyRunning(false)
         pushSnapshot(key)
         saveState()
+    }
+
+    @Volatile
+    var running: Boolean = false
+        private set
+
+    private fun notifyRunning(running: Boolean) {
+        mainHandler.post {
+            for (l in stateListeners.toList()) {
+                try {
+                    if (l is CalcStateListenerEx) l.onRunningStateChanged(running)
+                } catch (_: Throwable) {}
+            }
+        }
     }
 
     /** Atualiza o snapshot e notifica todos os listeners (na main thread). */
