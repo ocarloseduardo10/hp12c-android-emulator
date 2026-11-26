@@ -182,13 +182,36 @@ class LcdDisplayView @JvmOverloads constructor(
             val dx = bezelPad + 6f * density + (i + 0.14f) * digitPitch
             val dy = digitAreaTop + (digitAreaHeight - digitHeight) / 2f
 
-            // Tratar ponto e vírgula como separadores (não como dígito)
-            if (ch == '.' || ch == ',') {
-                // Desenhar pequeno ponto decimal entre este dígito e o anterior
+            // Tratar ponto e vírgula como separadores decimais
+            if (ch == '.') {
+                // Ponto decimal: pequeno círculo na base do dígito anterior
                 val dotX = dx - digitPitch * 0.15f
-                val dotY = dy + digitHeight * 0.85f
-                val dotRadius = digitThickness * 0.6f
+                val dotY = dy + digitHeight * 0.88f
+                val dotRadius = digitThickness * 0.55f
                 canvas.drawCircle(dotX, dotY, dotRadius, segmentOnPaint)
+                continue
+            }
+            if (ch == ',') {
+                // Vírgula decimal: arco curvo elegante (estilo LCD de 7 segmentos)
+                // Desenha um pequeno segmento diagonal curvo na base
+                val dotX = dx - digitPitch * 0.15f
+                val dotY = dy + digitHeight * 0.82f
+                val r = digitThickness * 0.5f
+                // Desenhar um pequeno ponto
+                canvas.drawCircle(dotX, dotY, r * 0.8f, segmentOnPaint)
+                // Desenhar a cauda como um pequeno retângulo diagonal (segmento do LCD)
+                val tailWidth = r * 0.7f
+                val tailHeight = r * 2.2f
+                canvas.save()
+                canvas.rotate(30f, dotX, dotY + r * 0.3f) // inclinação de 30 graus
+                val tailRect = RectF(
+                    dotX - tailWidth / 2f,
+                    dotY + r * 0.3f,
+                    dotX + tailWidth / 2f,
+                    dotY + r * 0.3f + tailHeight
+                )
+                canvas.drawRoundRect(tailRect, tailWidth / 2f, tailWidth / 2f, segmentOnPaint)
+                canvas.restore()
                 continue
             }
             if (ch == ' ') continue

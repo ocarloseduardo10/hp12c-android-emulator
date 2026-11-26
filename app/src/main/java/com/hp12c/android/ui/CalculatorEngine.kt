@@ -61,6 +61,17 @@ class CalculatorEngine(app: Application) {
     /** Histórico de operações (últimas 100 teclas). */
     private val history = OperationHistory(maxSize = 100)
 
+    /**
+     * Flag próprio para a tecla ON — controlado pela UI, não pelo motor.
+     * Quando true, a próxima tecla "." alterna o separador decimal.
+     */
+    @Volatile
+    var onKeyPressed: Boolean = false
+
+    /** Modo vírgula (true) ou ponto (false) para separador decimal. */
+    @Volatile
+    var commaMode: Boolean = false
+
     init {
         Log.d(TAG, "CalculatorEngine init begin")
         loadPersistedState()
@@ -86,7 +97,61 @@ class CalculatorEngine(app: Application) {
     fun sendKey(key: Key) {
         Log.d(TAG, "sendKey: $key (code=${key.code})")
         val displayBefore = try { calculator.display.string ?: "0" } catch (_: Throwable) { "0" }
-        // Indicar "running" para operações potencialmente longas (IRR, AMORT, NPV, YTM)
+
+        // === Tratamento especial: ON + . = alternar ponto/vírgula ===
+        // Controlado em Kotlin E no motor para garantir funcionamento completo.
+        if (key == Key.KEY_48 && onKeyPressed) {
+            onKeyPressed = false
+            commaMode = !commaMode
+            // Aplicar no motor para que grouping separators também troquem
+            try {
+                calculator.display.setComma(commaMode)
+            } catch (_: Throwable) {}
+            Log.d(TAG, "★★★ Separador decimal alternado para: ${if (commaMode) "VÍRGULA" else "PONTO"} ★★★")
+            mainHandler.post {
+                try {
+                    android.widget.Toast.makeText(app,
+                        if (commaMode) "Modo vírgula (0,00)" else "Modo ponto (0.00)",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                } catch (_: Throwable) {}
+            }
+            pushSnapshot(key)
+            saveState()
+            return
+        }
+
+        // === Tratamento especial: ON sozinho = ativar flag, não enviar ao motor ===
+        if (key == Key.KEY_41) {
+            onKeyPressed = !onKeyPressed
+            Log.d(TAG, "★★★ ON pressionado, onKeyPressed=$onKeyPressed ★★★")
+            // Toast visível para confirmar
+            mainHandler.post {
+                try {
+                    android.widget.Toast.makeText(app,
+                        if (onKeyPressed) "ON ativo — pressione . para trocar separador" else "ON cancelado",
+                        android.widget.Toast.LENGTH_SHORT
+                    ).show()
+                } catch (_: Throwable) {}
+            }
+            // Cancelar quaisquer prefixos ativos
+            try {
+                val flg = calculator.flags
+                if (flg.f == 1) flg.toggleF()
+                if (flg.g == 1) flg.toggleG()
+                if (flg.sto > 0) flg.setSto(0)
+                if (flg.rcl > 0) flg.setRcl(0)
+            } catch (_: Throwable) {}
+            pushSnapshot(key)
+            return
+        }
+
+        // Qualquer outra tecla cancela o flag ON
+        if (onKeyPressed) {
+            onKeyPressed = false
+        }
+
+        // Indicar "running" para operações potencialmente longas
         val isLongOp = key == Key.KEY_15 || key == Key.KEY_13 || key == Key.KEY_14 || key == Key.KEY_11
         if (isLongOp) {
             running = true
@@ -196,6 +261,9 @@ class CalculatorEngine(app: Application) {
             val prefs = app.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
             hapticEnabled = prefs.getBoolean(KEY_HAPTIC, true)
             soundEnabled = prefs.getBoolean(KEY_SOUND, false)
+            commaMode = prefs.getBoolean(KEY_COMMA, false)
+            // Aplicar commaMode no motor
+            try { calculator.display.setComma(commaMode) } catch (_: Throwable) {}
             StateRepository.restore(calculator, prefs.getString(KEY_STATE, null))
         } catch (e: Throwable) {
             Log.e(TAG, "Erro em loadPersistedState", e)
@@ -210,6 +278,7 @@ class CalculatorEngine(app: Application) {
                 .putString(KEY_STATE, json)
                 .putBoolean(KEY_HAPTIC, hapticEnabled)
                 .putBoolean(KEY_SOUND, soundEnabled)
+                .putBoolean(KEY_COMMA, commaMode)
                 .apply()
         } catch (e: Throwable) {
             Log.e(TAG, "Erro em saveState", e)
@@ -251,6 +320,7 @@ class CalculatorEngine(app: Application) {
         private const val KEY_STATE = "engine_state_json"
         private const val KEY_HAPTIC = "haptic_enabled"
         private const val KEY_SOUND = "sound_enabled"
+        private const val KEY_COMMA = "comma_mode"
 
         @Volatile
         private var instance: CalculatorEngine? = null

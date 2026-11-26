@@ -552,11 +552,10 @@ public class Calculator {
                                 this.doKey36();
                                 break;
                         }
-                        case KEY_41: {
-                                // this.doKey41();
-                                notifyQuit();
-                                break;
-                        }
+			case KEY_41: {
+				this.doKey41();
+				break;
+			}
                         case KEY_42: {
                                 this.doKey42();
                                 break;
@@ -2158,21 +2157,23 @@ public class Calculator {
                 }
         }
 
-        protected void doKey41() throws CalculatorException {
-                if (flg.getF() == 1) {
-                        flg.toggleF();
-                } else if (flg.getG() == 1) {
-                        flg.toggleG();
-                } else if (flg.getSto() > 0) {
-                        flg.toggleSto();
-                } else if (flg.getRcl() > 0) {
-                        flg.toggleRcl();
-                } else if (flg.getOn() == 1) {
-                        flg.toggleOn();
-                } else {
-                        flg.toggleOn();
-                }
-        }
+	protected void doKey41() throws CalculatorException {
+		if (flg.getF() == 1) {
+			flg.toggleF();
+		} else if (flg.getG() == 1) {
+			flg.toggleG();
+		} else if (flg.getSto() > 0) {
+			flg.toggleSto();
+		} else if (flg.getRcl() > 0) {
+			flg.toggleRcl();
+		} else if (flg.getOn() == 1) {
+			// Segundo ON = apenas desligar flag on (NAO fecha app)
+			flg.toggleOn();
+		} else {
+			// Primeiro ON = ativar flag on (para ON+. trocar separador)
+			flg.toggleOn();
+		}
+	}
 
         protected void doKey42() throws CalculatorException {
 
